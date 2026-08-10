@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuminaCorp Enterprise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dark-theme">
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="view-container active">
+        <div class="login-box glass-panel">
+            <div class="logo-glow"></div>
+            <h1 class="brand-title">LuminaCorp</h1>
+            <p class="brand-subtitle">Enterprise Workspace</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter corporate ID" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <div id="login-error" class="error-msg hidden"></div>
+                <button type="submit" class="btn-primary glow-btn">Authenticate</button>
+            </form>
+            <div class="demo-hints">
+                <p>Standard Employee: alex / password123</p>
+                <p>Executive Admin: admin / adminpass</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view-container hidden">
+        <nav class="sidebar glass-panel">
+            <h2 class="sidebar-brand">LuminaCorp</h2>
+            <div class="user-badge">
+                <div class="avatar" id="avatar-initial">A</div>
+                <div class="user-info">
+                    <span id="nav-username">Alex</span>
+                    <span id="nav-role" class="text-muted">Software Engineer</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="active" data-target="tab-overview">Overview</li>
+                <li data-target="tab-documents">Document Center</li>
+                <li data-target="tab-directory">Company Directory</li>
+            </ul>
+            <button id="btn-logout" class="btn-secondary logout-btn">Sign Out</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- OVERVIEW TAB -->
+            <section id="tab-overview" class="tab-content active">
+                <header class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p class="text-muted">Welcome back. Here is your summary for Q3 2026.</p>
+                </header>
+                
+                <div class="stats-grid">
+                    <div class="stat-card glass-panel">
+                        <h3>YTD Earnings</h3>
+                        <div class="stat-value" id="dash-salary">Loading...</div>
+                        <div class="trend positive">↑ 4.2% from last year</div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <h3>Annual Leave</h3>
+                        <div class="stat-value">14 Days</div>
+                        <div class="trend neutral">Available balance</div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <h3>Tax Status</h3>
+                        <div class="stat-value text-success">Verified</div>
+                        <div class="trend positive">W-4 on file</div>
+                    </div>
+                </div>
+
+                <div class="chart-container glass-panel mt-2">
+                    <h3>Compensation History</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="compChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DOCUMENTS TAB -->
+            <section id="tab-documents" class="tab-content">
+                <header class="section-header">
+                    <h1>Document Center</h1>
+                    <p class="text-muted">Access your confidential payroll and tax forms.</p>
+                </header>
+                
+                <div class="document-list">
+                    <div class="doc-card glass-panel">
+                        <div class="doc-icon">📄</div>
+                        <div class="doc-info">
+                            <h3>2026 W-2 Tax Statement</h3>
+                            <p class="text-muted">Official IRS Wage and Tax Statement</p>
+                        </div>
+                        <button id="btn-generate-pdf" class="btn-primary">Generate PDF</button>
+                    </div>
+                    <div class="doc-card glass-panel">
+                        <div class="doc-icon">📄</div>
+                        <div class="doc-info">
+                            <h3>Q3 Pay Stub (September)</h3>
+                            <p class="text-muted">Regular payroll distribution</p>
+                        </div>
+                        <button id="btn-view-stub" class="btn-secondary">View Stub</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DIRECTORY TAB -->
+            <section id="tab-directory" class="tab-content">
+                <header class="section-header">
+                    <h1>Company Directory</h1>
+                    <p class="text-muted">Find and connect with your colleagues.</p>
+                </header>
+                
+                <div class="directory-container glass-panel">
+                    <div class="search-bar">
+                        <input type="text" id="directory-search" placeholder="Search employees..." class="search-input">
+                    </div>
+                    <table class="directory-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="directory-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- PAY STUB MODAL -->
+    <div id="paystub-modal" class="modal-overlay hidden">
+        <div class="modal-card glass-panel">
+            <div class="modal-header">
+                <h2>Statement Details</h2>
+                <button id="modal-close" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body" id="paystub-content">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

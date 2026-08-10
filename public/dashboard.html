@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LuminaCorp</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-brand">LuminaCorp Portal</div>
+        <div class="nav-links">
+            <span id="nav-username">Logged in User</span>
+            <a href="/api/logout" class="btn-logout">Sign Out</a>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Employee Confidential Dashboard</h1>
+            <p>View confidential salary, SSN, tax documents, and manage your account.</p>
+        </header>
+
+        <div id="loading" class="loading">Fetching records...</div>
+        <div id="error-message" class="error-message hidden"></div>
+        <div id="success-message" class="success-message hidden"></div>
+
+        <div id="payroll-card" class="payroll-card hidden">
+            <div class="card-header">
+                <h2>Payroll Record</h2>
+                <span class="badge" id="emp-role">Role</span>
+            </div>
+            <div class="card-body">
+                <div class="data-group">
+                    <label>Employee ID</label>
+                    <div class="data-value" id="emp-id">-</div>
+                </div>
+                <div class="data-group">
+                    <label>Full Name</label>
+                    <div class="data-value" id="emp-name">-</div>
+                </div>
+                <div class="data-group">
+                    <label>Annual Salary</label>
+                    <div class="data-value highlight" id="emp-salary">-</div>
+                </div>
+                <div class="data-group">
+                    <label>Social Security Number</label>
+                    <div class="data-value sensitive" id="emp-ssn">-</div>
+                </div>
+                <div class="data-group">
+                    <label>Phone Number</label>
+                    <div class="data-value" id="emp-phone">-</div>
+                </div>
+                <div class="data-group">
+                    <label>Home Address</label>
+                    <div class="data-value" id="emp-address">-</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a id="btn-download-pdf" href="#" class="btn-primary" target="_blank">Download Tax Statement (PDF)</a>
+            </div>
+        </div>
+
+        <div id="profile-card" class="payroll-card hidden" style="margin-top: 2rem;">
+            <div class="card-header">
+                <h2>Update Profile Information</h2>
+            </div>
+            <div class="card-body">
+                <form id="updateProfileForm" style="width: 100%;">
+                    <!-- VULNERABILITY: emp_id is sent in request body and can be modified -->
+                    <input type="hidden" id="form-emp-id" name="emp_id">
+                    
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="form-phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="form-address" name="address">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 0.5rem 1.5rem;">Save Changes</button>
+                        <button type="button" id="btn-delete-account" class="btn-logout-link">Delete Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
