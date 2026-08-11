@@ -64,6 +64,7 @@ app.post('/api/v2/auth/login', (req, res) => {
         if (err) return res.status(500).json({ error: 'Database error' });
         if (user) {
             req.session.targetRef = user.target_ref;
+            req.session.userRole = user.role; // Save user role in session
             res.json({ success: true, user: { username: user.username, role: user.role, target_ref: user.target_ref } });
         } else {
             res.status(401).json({ success: false, error: 'Invalid credentials' });
@@ -84,7 +85,7 @@ app.get('/api/v2/profile/me', requireAuth, (req, res) => {
     });
 });
 
-// GET DIRECTORY (Shows target_ref for each user)
+// GET DIRECTORY
 app.get('/api/v2/directory', requireAuth, (req, res) => {
     db.all("SELECT target_ref, username, role, department FROM users", (err, rows) => {
         if (err) return res.status(500).json({ error: 'Database error' });
@@ -92,12 +93,23 @@ app.get('/api/v2/directory', requireAuth, (req, res) => {
     });
 });
 
-// GENERATE PDF (Vulnerable IDOR: blindly trusts req.body.target_ref)
+// GENERATE PDF (Vulnerable IDOR: Uses target_ref, intended for Admin feature, BUT misses the Admin role check!)
 app.post('/api/v2/documents/generate', requireAuth, (req, res) => {
     const reportType = req.body.report_type;
     
-    // VULNERABILITY: Takes target_ref directly from client JSON request without checking authorization
+    // The developer intended target_ref to allow Admins to generate PDFs for any employee...
     const requestedTargetRef = req.body.target_ref || req.session.targetRef;
+
+    // --- VULNERABILITY: MISSING ADMIN ROLE CHECK ---
+    // The developer forgot to verify if the requesting user is actually an Admin!
+    /*
+    // SECURE FIX DEMONSTRATION: Uncomment this block to fix the IDOR vulnerability
+    
+    */
+    if (req.body.target_ref && req.body.target_ref !== req.session.targetRef && req.body.userRole !== 'Executive Admin') {
+        return res.status(403).json({error: "ACCESS_DENIED"});
+    }
+
 
     if (reportType !== 'W2_TAX') {
         return res.status(400).json({ error: 'Invalid report type' });
@@ -140,9 +152,17 @@ app.post('/api/v2/documents/generate', requireAuth, (req, res) => {
     });
 });
 
-// PAY STUB DETAILS (Vulnerable IDOR: blindly trusts req.body.target_ref)
+// PAY STUB DETAILS (Vulnerable IDOR: misses the Admin role check!)
 app.post('/api/v2/paystub/details', requireAuth, (req, res) => {
     const requestedTargetRef = req.body.target_ref || req.session.targetRef;
+
+    // --- VULNERABILITY: MISSING ADMIN ROLE CHECK ---
+    /*
+    // SECURE FIX DEMONSTRATION: Uncomment this block to fix the IDOR vulnerability
+    if (req.body.target_ref && req.body.target_ref !== req.session.targetRef && req.session.userRole !== 'Executive Admin') {
+        return res.status(403).json({ error: 'Access Denied: Executive Admin role required to view pay stubs for other users.' });
+    }
+    */
     
     db.get("SELECT * FROM users WHERE target_ref = ?", [requestedTargetRef], (err, user) => {
         if (err || !user) return res.status(404).json({ error: 'Pay stub not found' });

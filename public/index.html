@@ -92,9 +92,24 @@
             <section id="tab-documents" class="tab-content">
                 <header class="section-header">
                     <h1>Document Center</h1>
-                    <p class="text-muted">Access your confidential payroll and tax forms.</p>
+                    <p class="text-muted">Access confidential payroll and tax forms.</p>
                 </header>
-                
+
+                <!-- ADMIN ONLY FEATURE PANEL (Visible only when logged in as Executive Admin) -->
+                <div id="admin-doc-panel" class="doc-card glass-panel hidden" style="margin-bottom: 1.5rem; border: 1px solid var(--accent);">
+                    <div class="doc-icon">🛡️</div>
+                    <div class="doc-info">
+                        <h3>Admin Employee Document Generator</h3>
+                        <p class="text-muted">Executive Feature: Select any employee to generate their W-2 Tax Statement</p>
+                        <div style="margin-top: 0.8rem;">
+                            <select id="admin-emp-select" class="search-input" style="max-width: 300px; cursor: pointer;">
+                                <!-- Populated dynamically for Admins -->
+                            </select>
+                        </div>
+                    </div>
+                    <button id="btn-admin-generate-pdf" class="btn-primary">Generate Selected PDF</button>
+                </div>
+
                 <div class="document-list">
                     <div class="doc-card glass-panel">
                         <div class="doc-icon">📄</div>

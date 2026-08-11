@@ -68,6 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('nav-role').textContent = user.role;
         document.getElementById('avatar-initial').textContent = user.username.charAt(0).toUpperCase();
         document.getElementById('dash-salary').textContent = user.salary;
+
+        // Executive Admin UI feature check
+        const adminPanel = document.getElementById('admin-doc-panel');
+        if (adminPanel) {
+            if (user.role === 'Executive Admin') {
+                adminPanel.classList.remove('hidden');
+            } else {
+                adminPanel.classList.add('hidden');
+            }
+        }
     }
 
     // Tab Switching
@@ -99,10 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const json = await res.json();
                 directoryData = json.data || [];
                 renderDirectory(directoryData);
+                populateAdminEmpSelect(directoryData);
             }
         } catch (e) {
             console.error("Directory fetch failed", e);
         }
+    }
+
+    function populateAdminEmpSelect(data) {
+        const select = document.getElementById('admin-emp-select');
+        if (!select) return;
+        select.innerHTML = '';
+        data.forEach(emp => {
+            const opt = document.createElement('option');
+            opt.value = emp.target_ref;
+            opt.textContent = `${emp.username.toUpperCase()} (${emp.role})`;
+            select.appendChild(opt);
+        });
     }
 
     function renderDirectory(data) {
@@ -136,8 +159,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle PDF Generation (IDOR: explicitly sends target_ref in JSON payload - visible ONLY in Network tab)
+    // Handle Standard PDF Generation (IDOR: explicitly sends target_ref in JSON payload)
     document.getElementById('btn-generate-pdf').addEventListener('click', async () => {
+        generatePdfForTarget(currentUser ? currentUser.target_ref : "");
+    });
+
+    // Handle Admin PDF Generation (Admin picks employee from dropdown)
+    const btnAdminGen = document.getElementById('btn-admin-generate-pdf');
+    if (btnAdminGen) {
+        btnAdminGen.addEventListener('click', async () => {
+            const select = document.getElementById('admin-emp-select');
+            if (select && select.value) {
+                generatePdfForTarget(select.value);
+            }
+        });
+    }
+
+    async function generatePdfForTarget(targetRef) {
         const btn = document.getElementById('btn-generate-pdf');
         const originalText = btn.textContent;
         btn.textContent = "Generating...";
@@ -146,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const payload = {
                 report_type: "W2_TAX",
-                target_ref: currentUser ? currentUser.target_ref : ""
+                target_ref: targetRef
             };
 
             const res = await fetch('/api/v2/documents/generate', {
@@ -181,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = originalText;
             btn.disabled = false;
         }
-    });
+    }
 
     // Handle View Stub Modal (IDOR: explicitly sends target_ref in JSON payload - visible ONLY in Network tab)
     const stubModal = document.getElementById('paystub-modal');
