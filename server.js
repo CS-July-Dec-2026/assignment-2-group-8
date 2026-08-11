@@ -103,12 +103,12 @@ app.post('/api/v2/documents/generate', requireAuth, (req, res) => {
     // --- VULNERABILITY: MISSING ADMIN ROLE CHECK ---
     // The developer forgot to verify if the requesting user is actually an Admin!
     /*
-    // SECURE FIX DEMONSTRATION: Uncomment this block to fix the IDOR vulnerability
     
-    */
-    if (req.body.target_ref && req.body.target_ref !== req.session.targetRef && req.body.userRole !== 'Executive Admin') {
-        return res.status(403).json({error: "ACCESS_DENIED"});
-    }
+    // Uncomment this below block of code to secure this endpoint from IDOR vulnerability!
+    
+    // if (req.body.target_ref && req.body.target_ref !== req.session.targetRef && req.body.userRole !== 'Executive Admin') {
+    //     return res.status(403).json({error: "ACCESS_DENIED"});
+    // }
 
 
     if (reportType !== 'W2_TAX') {
